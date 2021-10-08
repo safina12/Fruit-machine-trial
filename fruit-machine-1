@@ -1,0 +1,87 @@
+
+
+
+import random
+print('''Welcome to the Slot Machine Simulator
+You'll start with $50. You'll be asked if you want to play.
+Answer with yes/no. you can also use y/n
+No case sensitivity in your answer.
+For example you can answer with YEs, yEs, Y, nO, N.
+To win you must get one of the following combinations:
+BLACK\tBLACK\tBLACK\t\tpays\t$250
+WHITE\tWHITE\tWHITE/BAR\tpays\t$20
+GREEN\tGREEN\tGREEN/BAR\tpays\t$14
+YELLOW\tYELLOW\tYELLOW/BAR\tpays\t$10
+
+''')
+#Constants:
+INIT_STAKE = 50
+ITEMS = ["BLACK", "WHITE", "GREEN", "YELLOW"]
+
+firstWheel = None
+secondWheel = None
+thirdWheel = None
+stake = INIT_STAKE
+
+def play():
+    global stake, firstWheel, secondWheel, thirdWheel
+    playQuestion = askPlayer()
+    while(stake != 0 and playQuestion == True):
+        firstWheel = spinWheel()
+        secondWheel = spinWheel()
+        thirdWheel = spinWheel()
+        printScore()
+        playQuestion = askPlayer()
+
+def askPlayer():
+    '''
+    Asks the player if he wants to play again.
+    expecting from the user to answer with yes, y, no or n
+    No case sensitivity in the answer. yes, YeS, y, y, nO . . . all works
+    '''
+    global stake
+    while(True):
+        answer = input("You have $" + str(stake) + ". Would you like to play? ")
+        answer = answer.lower()
+        if(answer == "yes" or answer == "y"):
+            return True
+        elif(answer == "no" or answer == "n"):
+            print("You ended the game with $" + str(stake) + " in your hand.")
+            return False
+        else:
+            print("wrong input!")
+
+def spinWheel():
+    '''
+    returns a random item from the wheel
+    '''
+    randomNumber = random.randint(0, 5)
+    return ITEMS[randomNumber]
+#Cherry - black. orange- white. plum-green. bell-yellow
+def printScore():
+    '''
+    prints the current score
+    '''
+    global stake, firstWheel, secondWheel, thirdWheel
+    if((firstWheel == "BLACK") and (secondWheel != "BLACK")):
+        win = 2
+    elif((firstWheel == "BLACK") and (secondWheel == "BLACK") and (thirdWheel != "BLACK")):
+        win = 5
+    elif((firstWheel == "BLACK") and (secondWheel == "BLACK") and (thirdWheel == "BLACK")):
+        win = 7
+    elif((firstWheel == "WHITE") and (secondWheel == "WHITE") and ((thirdWheel == "WHITE") or (thirdWheel == "BAR"))):
+        win = 10
+    elif((firstWheel == "GREEN") and (secondWheel == "GREEN") and ((thirdWheel == "GREEN") or (thirdWheel == "BAR"))):
+        win = 14
+    elif((firstWheel == "YELLOW") and (secondWheel == "YELLOW") and ((thirdWheel == "YELLOW") or (thirdWheel == "BAR"))):
+        win = 20
+    elif((firstWheel == "BAR") and (secondWheel == "BAR") and (thirdWheel == "BAR")):
+        win = 250
+    else:
+        win = -1
+
+    stake += win
+    if(win > 0):
+        print(firstWheel + '\t' + secondWheel + '\t' + thirdWheel + ' -- You win $' + str(win))
+    else:
+        print(firstWheel + '\t' + secondWheel + '\t' + thirdWheel + ' -- You lose')
